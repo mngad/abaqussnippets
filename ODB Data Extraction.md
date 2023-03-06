@@ -32,3 +32,38 @@ for field, res in [('U', tibpos_res), ('UR', tibrot_res), ('RF', tib_rf_res)]:
     else:
         res.write(str(dat.data[0]) + '\t' + str(dat.data[1]) + '\t' + str(dat.data[2]) + '\n')
 ```
+
+
+## Tangentially Related
+Time the loop and estimate remaining time.
+
+```python
+import time
+start_time = time.time()
+
+init = time.time()
+init_time = init - start_time
+
+# Do the looping
+
+end_time = time.time()
+loop_time = end_time - start_time
+
+if(old_looptime != 0): 
+    loopdif = loop_time - old_looptime
+    totpred = ((loopdif) * len(odb.steps[stepName].frames))+ init_time
+    remainingtime = totpred - (i*loopdif) - init_time
+    if remainingtime > 120:
+        rem = str(remainingtime/60) + "mins"
+    else:
+        rem = str(remainingtime) + "s"
+    if totpred > 120:
+        tot = str(totpred/60) + "mins"
+    else:
+        tot = str(totpred) + "s"
+    print("current time: " + str(loop_time) + ", remaining time: " + rem+ ", total time: " + tot +"\r")
+
+old_looptime = loop_time
+```
+
+## [Full Example Script](ExampleCode/Scriptfor_DataExtract.py)
