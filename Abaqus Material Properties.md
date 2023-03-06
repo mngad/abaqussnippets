@@ -2,7 +2,7 @@
 
 ## Cycling through properties
 
-```
+```python
 for mat in mdb.models['ModelName'].materials.keys():
     myMat = mdb.models['ModelName'].materials[mat]
     if mat.endswith('SUFFIX'):
