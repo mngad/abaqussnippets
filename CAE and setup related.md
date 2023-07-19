@@ -13,7 +13,7 @@ del mdb.models['Model-1']
 
 ```python
 
-mdb.Job(name=job_name, model='LTKN6046_host', description='', type=ANALYSIS, 
+mdb.Job(name=job_name, model='Model Name', description='', type=ANALYSIS, 
     atTime=None, waitMinutes=0, waitHours=0, queue=None, memory=90, 
     memoryUnits=PERCENTAGE, getMemoryFromAnalysis=True, 
     explicitPrecision=SINGLE, nodalOutputPrecision=SINGLE, echoPrint=OFF, 

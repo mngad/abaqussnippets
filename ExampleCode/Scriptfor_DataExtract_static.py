@@ -7,12 +7,14 @@ import time
 #**********************************************
 first_step_name = 'Load_stat'
 load_step_name = 'Load_stat'
+#tib_instance_name = 'ASSEMBLY'
 tib_instance_name = 'TIB-1'
 node_set_name = 'TIB_SET'
 #node_set_name = 'CONTACTNODESET'
 tib_rp_name = 'TIBRP'
 explicit = True
-filename = 'F:/TKR_Exp_test1/Static_v3.odb'
+filename = 'F:/TKR_Exp_test1/Static_v3_0p01-2mm.odb'
+inc_amount = 0.01
 #**********************************************************************
 preferred_extension = '.xlsx'  # Insert the extension for the output file
 #**********************************************************************
@@ -36,12 +38,17 @@ with open(name_of_file1, 'w') as SD_results_x, open(name_of_file2, 'w') as SD_re
         open(name_of_file9, 'w') as tib_rf_res:
     #***********************************************************************
    last_frame = odb.steps[first_step_name].frames[-1]
+   # print(last_frame)
    displacement = last_frame.fieldOutputs['CPRESS']
+   # print(displacement)
    field_values = displacement.values
-   center = odb.rootAssembly.instances[tib_instance_name]
+   # print(field_values)
+   center = odb.rootAssembly.instances[tib_instance_name].nodeSets[node_set_name]
+   # print(center)
    center_displacement = displacement.getSubset(region=center)
+   # print(center_displacement)
    center_values = center_displacement.values
-
+   
    # nodenumbers
    SD_results_n.write('\t'.join(str(v.nodeLabel) for v in center_values) + '\n')
 
@@ -50,7 +57,7 @@ with open(name_of_file1, 'w') as SD_results_x, open(name_of_file2, 'w') as SD_re
    SD_results_z.write('0\t' + '\t'.join(str(v.nodeLabel) for v in center_values) + '\n')
 
    step_num = 0
-   inc_amount = 0.00787
+   
 
    if explicit:
       for stepName in odb.steps.keys():
@@ -61,10 +68,10 @@ with open(name_of_file1, 'w') as SD_results_x, open(name_of_file2, 'w') as SD_re
             init_time = init - start_time
             for i, frame in enumerate(odb.steps[stepName].frames):
                print(str(i) +"/" + str(len(odb.steps[stepName].frames)-1)+"\r")
-               center = odb.rootAssembly.instances['TIB-1'].nodeSets['TIB_SET']
-               for field, res in [('CPRESS   General_Contact_Domain', SD_results_x),
-                  ('CSLIP1   General_Contact_Domain', SD_results_y),
-                  ('CSLIP2   General_Contact_Domain', SD_results_z)]:
+               center = odb.rootAssembly.instances[tib_instance_name].nodeSets[node_set_name]
+               for field, res in [('CPRESS', SD_results_x),
+                  ('CSLIP1', SD_results_y),
+                  ('CSLIP2', SD_results_z)]:
                   subset = frame.fieldOutputs[field].getSubset(region=center)
                   values = subset.values
                   if i < 1:
@@ -104,20 +111,20 @@ with open(name_of_file1, 'w') as SD_results_x, open(name_of_file2, 'w') as SD_re
                
                old_looptime = loop_time
 
-         else:
-            lastFrame = odb.steps[stepName].frames[-1]
-            for field, file in zip(
-               [lastFrame.fieldOutputs['CPRESS   General_Contact_Domain'], lastFrame.fieldOutputs['CSLIP1   General_Contact_Domain'], lastFrame.fieldOutputs['CSLIP2   General_Contact_Domain']],
-               [SD_results_x, SD_results_y, SD_results_z]
-               ):
-               if step_num < 1:
-                    file.write('0\t')
-               else:
-                    file.write(str(inc_amount * step_num) + '\t')
-               for v in field.getSubset(region=odb.rootAssembly.instances['TIB-1'].nodeSets['TIB_SET']).values:
-                    file.write(str(v.data) + '\t')
-               file.write('\n')
-            step_num += 1
+#         else:
+#            lastFrame = odb.steps[stepName].frames[-1]
+#            for field, file in zip(
+#               [lastFrame.fieldOutputs['CPRESS   General_Contact_Domain'], lastFrame.fieldOutputs['CSLIP1   General_Contact_Domain'], lastFrame.fieldOutputs['CSLIP2   General_Contact_Domain']],
+#               [SD_results_x, SD_results_y, SD_results_z]
+#               ):
+#               if step_num < 1:
+#                    file.write('0\t')
+#               else:
+#                    file.write(str(inc_amount * step_num) + '\t')
+#               for v in field.getSubset(region=odb.rootAssembly.instances['TIB-1'].nodeSets['TIB_SET']).values:
+#                    file.write(str(v.data) + '\t')
+#               file.write('\n')
+#            step_num += 1
 
    else:
       for i, step_name in enumerate(odb.steps.keys()):
